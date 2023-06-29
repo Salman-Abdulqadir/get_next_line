@@ -6,25 +6,30 @@
 /*   By: sabdulqa <sabdulqa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/27 15:20:38 by sabdulqa          #+#    #+#             */
-/*   Updated: 2023/06/27 18:39:18 by sabdulqa         ###   ########.fr       */
+/*   Updated: 2023/06/29 17:49:53 by sabdulqa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include <stdio.h>
 
-char	*join(char *s1, char *s2)
+int	contains_newline(char *buffer)
 {
-	char	*joined;
+	int	i;
 
-	joined = ft_strjoin(s1, s2);
-	free(s1);
-	return (joined);
+	i = 0;
+	while (buffer[i])
+	{
+		if (buffer[i] == '\n')
+			return (1);
+		i++;
+	}
+	return (0);
 }
 
 char	*read_file(int fd, char *file)
 {
 	char	*buffer;
+	char	*joined;
 	int		read_count;
 
 	if (!file)
@@ -37,8 +42,13 @@ char	*read_file(int fd, char *file)
 		if (read_count == -1)
 			break ;
 		buffer[read_count] = '\0';
-		file = join(file, buffer);
+		joined = ft_strjoin(file, buffer);
+		free(file);
+		file = joined;
+		if (contains_newline(buffer))
+			break ;
 	}
+	free(buffer);
 	return (file);
 }
 
@@ -52,10 +62,13 @@ char	*find_line(char *file)
 	i = 0;
 	while (file[i] && file[i] != '\n')
 		i++;
-	line = malloc(sizeof(char) * (i + 1));
+	line = ft_calloc(i + 1, sizeof(char));
 	line[i + 1] = '\0';
 	if (!line)
+	{
+		free(file);
 		return (NULL);
+	}
 	line = ft_memcpy(line, file, i + 1);
 	return (line);
 }
@@ -68,7 +81,12 @@ char	*find_remainder(char *file)
 	i = 0;
 	while (file[i] && file[i] != '\n')
 		i++;
-	remainder = malloc(sizeof(char) * (ft_strlen(file) - i));
+	if (!file[i])
+	{
+		free(file);
+		return (NULL);
+	}
+	remainder = ft_calloc((ft_strlen(file) - i), sizeof(char));
 	remainder[ft_strlen(file) - i] = '\0';
 	if (!remainder)
 		return (NULL);
@@ -82,7 +100,7 @@ char	*get_next_line(int fd)
 	static char	*file;
 	char		*line;
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
+	if (fd < 0 || BUFFER_SIZE < 1)
 		return (NULL);
 	if (BUFFER_SIZE > 2147483647)
 		return (NULL);
@@ -94,20 +112,23 @@ char	*get_next_line(int fd)
 	return (line);
 }
 
-int	main()
-{
-	int        fd;
-    char    *line;
-    char    *line2;
-    char    *line3;   
-	fd = open("file.txt", O_RDONLY);
-	line = get_next_line(fd);
-	while(line != NULL){
-		printf("%s\n", line);
-		line = get_next_line(fd);
-	}
-	free(line);
-	// free(line2);
-	// free(line3);
-    return (0);
-}
+// #include <stdio.h>
+// int	main()
+// {
+// 	int        fd;
+//     char    *line;
+//     char    *line2;
+//     char    *line3;   
+// 	fd = open("file.txt", O_RDONLY);
+// 	line = get_next_line(0);
+// 	int i = 0;
+// 	while(i < 3){
+// 		printf("%s\n", line);
+// 		line = get_next_line(0);
+// 		i++;
+// 	}
+// 	free(line);
+// 	// free(line2);
+// 	// free(line3);
+//     return (0);
+// }

@@ -6,7 +6,7 @@
 /*   By: sabdulqa <sabdulqa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/27 12:38:29 by sabdulqa          #+#    #+#             */
-/*   Updated: 2023/06/27 18:36:41 by sabdulqa         ###   ########.fr       */
+/*   Updated: 2023/06/29 17:55:58 by sabdulqa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,15 @@
 
 char	*ft_strjoin(char const *s1, char const *s2)
 {
-	int		sizetotal;
 	char	*res;
 	int		i;
 	int		j;
 
+	if (!s1 || !s2)
+		return (NULL);
 	i = 0;
-	sizetotal = ft_strlen(s1) + ft_strlen(s2);
-	res = malloc(sizeof(char) * (sizetotal + 1));
-	if (!res || !s1 || !s2)
+	res = malloc(sizeof(char) * (ft_strlen(s1) + ft_strlen(s2) + 1));
+	if (!res)
 		return (NULL);
 	while (s1[i] != 0)
 	{
@@ -36,7 +36,7 @@ char	*ft_strjoin(char const *s1, char const *s2)
 		i++;
 		j++;
 	}
-	res[sizetotal] = 0;
+	res[i] = 0;
 	return (res);
 }
 
